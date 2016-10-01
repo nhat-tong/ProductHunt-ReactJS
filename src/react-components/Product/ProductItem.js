@@ -46,7 +46,7 @@ renderInfoSession() {
       </a>
       <p>{this.props.description}</p>
         <a href="#">
-          <img className="small-avatar" src={this.props.marker.avatar} />
+          <img className="small-avatar" src={this.props.maker.avatar} />
         </a>
     </section>
   );

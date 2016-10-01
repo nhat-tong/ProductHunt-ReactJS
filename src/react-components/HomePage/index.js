@@ -1,37 +1,33 @@
 import React from 'react';
 import ProductList from '../Product/ProductList';
+import Firebase from 'firebase';
+import _ from 'lodash';
 
 class HomePage extends React.Component {
   constructor() {
     super();
     this.state = {
-      ProductList: [
-        {
-          id: 1,
-          name: 'CodeCademy',
-          link: 'https://codecademy.com',
-          media: '/img/codecademy.jpeg',
-          upvote: 169,
-          description: 'Code for anyone',
-          marker: {
-            name: 'hieu',
-            avatar: '/img/hieu.jpeg'
-        }
-      },
-        {
-          id: 2,
-          name: 'Code4Startup',
-          link: 'https://code4startup.com',
-          media: '/img/code4startup.jpeg',
-          upvote: 169,
-          description: 'Code for startups',
-          marker: {
-            name: 'leo',
-            avatar: '/img/leo.jpeg'
-        }
-      }
-      ]
+      ProductList: []
     };
+
+    // Initialize Firebase
+    // https://firebase.google.com/support/guides/firebase-web
+    var config = {
+      apiKey: "AIzaSyD7YCO27zGw16GiLjPKK31M0siaEz0OEj4",
+      authDomain: "codehunt-e35f2.firebaseapp.com",
+      databaseURL: "https://codehunt-e35f2.firebaseio.com",
+      storageBucket: "",
+      messagingSenderId: "28704545983"
+    };
+    Firebase.initializeApp(config);
+    var firebaseRef = Firebase.database().ref('/products');
+    // DataSnapshot
+    firebaseRef.on('value', (snapshot) => {
+      var products = _.values(snapshot.val());
+      this.setState({
+        ProductList: products
+      });
+    });
   }
 
   render() {
