@@ -21343,7 +21343,7 @@ var Navbar = function (_React$Component) {
 exports.default = Navbar;
 
 },{"./LoginPopup":173,"./PostPopup":175,"./ProfileMenu":176,"react":171}],178:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -21351,9 +21351,13 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = require("react");
+var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
+
+var _ProductPopup = require('./ProductPopup');
+
+var _ProductPopup2 = _interopRequireDefault(_ProductPopup);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21369,73 +21373,87 @@ var ProductItem = function (_React$Component) {
   function ProductItem() {
     _classCallCheck(this, ProductItem);
 
-    return _possibleConstructorReturn(this, (ProductItem.__proto__ || Object.getPrototypeOf(ProductItem)).call(this));
+    var _this = _possibleConstructorReturn(this, (ProductItem.__proto__ || Object.getPrototypeOf(ProductItem)).call(this));
+
+    _this.showProductPopup = function () {
+      _this.setState({ productPopupStatus: true });
+    };
+
+    _this.hideProductPopup = function () {
+      _this.setState({ productPopupStatus: false });
+    };
+
+    _this.state = {
+      productPopupStatus: false
+    };
+    return _this;
   }
 
   _createClass(ProductItem, [{
-    key: "renderUpvoteButton",
+    key: 'renderUpvoteButton',
     value: function renderUpvoteButton() {
       return _react2.default.createElement(
-        "a",
-        { className: "upvote-button", href: "#" },
+        'a',
+        { className: 'upvote-button', href: '#' },
         _react2.default.createElement(
-          "span",
+          'span',
           null,
-          _react2.default.createElement("i", { className: "fa fa-sort-asc" })
+          _react2.default.createElement('i', { className: 'fa fa-sort-asc' })
         ),
         this.props.upvote
       );
     }
   }, {
-    key: "renderNewWindowIcon",
+    key: 'renderNewWindowIcon',
     value: function renderNewWindowIcon() {
       return _react2.default.createElement(
-        "a",
-        { className: "product-item-link", href: this.props.link },
+        'a',
+        { className: 'product-item-link', href: this.props.link },
         _react2.default.createElement(
-          "span",
+          'span',
           null,
-          _react2.default.createElement("i", { className: "fa fa-external-link" })
+          _react2.default.createElement('i', { className: 'fa fa-external-link' })
         )
       );
     }
   }, {
-    key: "renderInfoSession",
+    key: 'renderInfoSession',
     value: function renderInfoSession() {
       return _react2.default.createElement(
-        "section",
-        { className: "product-item-info" },
+        'section',
+        { className: 'product-item-info' },
         _react2.default.createElement(
-          "a",
-          { href: "#" },
+          'a',
+          { href: '#', onClick: this.showProductPopup },
           _react2.default.createElement(
-            "h2",
+            'h2',
             null,
             this.props.name
           )
         ),
         _react2.default.createElement(
-          "p",
+          'p',
           null,
           this.props.description
         ),
         _react2.default.createElement(
-          "a",
-          { href: "#" },
-          _react2.default.createElement("img", { className: "small-avatar", src: this.props.marker.avatar })
+          'a',
+          { href: '#' },
+          _react2.default.createElement('img', { className: 'small-avatar', src: this.props.marker.avatar })
         )
       );
     }
   }, {
-    key: "render",
+    key: 'render',
     value: function render() {
       return _react2.default.createElement(
-        "li",
-        { className: "product-item" },
+        'li',
+        { className: 'product-item' },
         this.renderUpvoteButton(),
-        _react2.default.createElement("img", { className: "product-item-media", src: this.props.media }),
+        _react2.default.createElement('img', { className: 'product-item-media', src: this.props.media }),
         this.renderInfoSession(),
-        this.renderNewWindowIcon()
+        this.renderNewWindowIcon(),
+        _react2.default.createElement(_ProductPopup2.default, { status: this.state.productPopupStatus, hidePopup: this.hideProductPopup })
       );
     }
   }]);
@@ -21445,7 +21463,7 @@ var ProductItem = function (_React$Component) {
 
 exports.default = ProductItem;
 
-},{"react":171}],179:[function(require,module,exports){
+},{"./ProductPopup":180,"react":171}],179:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21502,6 +21520,192 @@ exports.default = ProductList;
 },{"./ProductItem":178,"react":171}],180:[function(require,module,exports){
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Popup = require('../Navbar/Popup');
+
+var _Popup2 = _interopRequireDefault(_Popup);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var ProductPopup = function (_React$Component) {
+  _inherits(ProductPopup, _React$Component);
+
+  function ProductPopup() {
+    _classCallCheck(this, ProductPopup);
+
+    var _this = _possibleConstructorReturn(this, (ProductPopup.__proto__ || Object.getPrototypeOf(ProductPopup)).call(this));
+
+    _this.state = {
+      product: {
+        id: 1,
+        name: 'CodeCademy',
+        link: 'https://codecademy.com',
+        media: '/img/codecademy.jpeg',
+        upvote: 169,
+        description: 'Code for anyone',
+        marker: {
+          name: 'hieu',
+          avatar: '/img/hieu.jpeg'
+        }
+      },
+      comments: [{
+        name: "Leo",
+        avatar: "/img/leo.jpeg",
+        content: "I love this product"
+      }, {
+        name: "Jonny",
+        avatar: "/img/hieu.jpeg",
+        content: "I love this product"
+      }]
+    };
+    return _this;
+  }
+
+  _createClass(ProductPopup, [{
+    key: 'renderUpvoteButton',
+    value: function renderUpvoteButton() {
+      return _react2.default.createElement(
+        'a',
+        { className: 'upvote-button', href: '#' },
+        _react2.default.createElement(
+          'span',
+          null,
+          _react2.default.createElement('i', { className: 'fa fa-sort-asc' })
+        ),
+        this.state.product.upvote
+      );
+    }
+  }, {
+    key: 'renderHeader',
+    value: function renderHeader() {
+      return _react2.default.createElement(
+        'header',
+        { style: { backgroundImage: 'url(' + this.state.product.media + ')' } },
+        _react2.default.createElement(
+          'section',
+          { className: 'header-shadow' },
+          _react2.default.createElement(
+            'h1',
+            null,
+            this.state.product.name
+          ),
+          _react2.default.createElement(
+            'p',
+            null,
+            this.state.product.description
+          ),
+          _react2.default.createElement(
+            'section',
+            null,
+            this.renderUpvoteButton(),
+            _react2.default.createElement(
+              'a',
+              { className: 'getit-btn', href: this.state.product.link, target: '_blank' },
+              'GET IT'
+            )
+          )
+        )
+      );
+    }
+  }, {
+    key: 'renderBodyDiscussion',
+    value: function renderBodyDiscussion() {
+      return _react2.default.createElement(
+        'section',
+        { className: 'discussion' },
+        _react2.default.createElement(
+          'h2',
+          null,
+          'Discussion'
+        ),
+        _react2.default.createElement(
+          'section',
+          { className: 'post-comment' },
+          _react2.default.createElement('img', { className: 'medium-avatar', src: '/img/leo.jpeg' }),
+          _react2.default.createElement('input', { placeholder: 'What do you think of this product?' })
+        ),
+        this.renderComments()
+      );
+    }
+  }, {
+    key: 'renderBody',
+    value: function renderBody() {
+      return _react2.default.createElement(
+        'section',
+        { className: 'product-popup-body' },
+        _react2.default.createElement(
+          'main',
+          null,
+          this.renderBodyDiscussion()
+        )
+      );
+    }
+  }, {
+    key: 'renderComments',
+    value: function renderComments() {
+      return _react2.default.createElement(
+        'ul',
+        { className: 'comment-list' },
+        this.state.comments.map(function (comment, idx) {
+          return _react2.default.createElement(
+            'li',
+            { key: idx },
+            _react2.default.createElement('img', { className: 'medium-avatar', src: comment.avatar }),
+            _react2.default.createElement(
+              'section',
+              null,
+              _react2.default.createElement(
+                'strong',
+                null,
+                comment.name
+              ),
+              _react2.default.createElement(
+                'p',
+                null,
+                comment.content
+              )
+            )
+          );
+        })
+      );
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        _Popup2.default,
+        _extends({}, this.props, { style: 'product-popup' }),
+        this.renderHeader(),
+        this.renderBody()
+      );
+    }
+  }]);
+
+  return ProductPopup;
+}(_react2.default.Component);
+
+exports.default = ProductPopup;
+
+},{"../Navbar/Popup":174,"react":171}],181:[function(require,module,exports){
+'use strict';
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
@@ -21554,4 +21758,4 @@ var App = function (_React$Component) {
 
 _reactDom2.default.render(_react2.default.createElement(App, null), document.getElementById('root'));
 
-},{"./HomePage":172,"./Navbar":177,"react":171,"react-dom":28}]},{},[180]);
+},{"./HomePage":172,"./Navbar":177,"react":171,"react-dom":28}]},{},[181]);
