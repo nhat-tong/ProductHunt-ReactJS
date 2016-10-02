@@ -40372,6 +40372,13 @@ var Actions = function () {
         });
       };
     }
+  }, {
+    key: 'addProduct',
+    value: function addProduct(product) {
+      return function (dispatch) {
+        _firebase2.default.database().ref('/products').push(product);
+      };
+    }
   }]);
 
   return Actions;
@@ -40670,6 +40677,10 @@ var _Popup = require('./Popup');
 
 var _Popup2 = _interopRequireDefault(_Popup);
 
+var _actions = require('../../actions');
+
+var _actions2 = _interopRequireDefault(_actions);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -40686,7 +40697,22 @@ var PostPopup = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (PostPopup.__proto__ || Object.getPrototypeOf(PostPopup)).call(this));
 
-    _this.handlePost = function () {};
+    _this.handlePost = function () {
+      var newProduct = {
+        name: _this.refs.name.value,
+        description: _this.refs.description.value,
+        link: _this.refs.link.value,
+        media: _this.refs.media.value,
+        upvote: 0,
+        maker: {
+          name: _this.props.user.name,
+          avatar: _this.props.user.avatar
+        }
+      };
+
+      _actions2.default.addProduct(newProduct);
+      _this.props.hidePopup();
+    };
 
     return _this;
   }
@@ -40722,7 +40748,7 @@ var PostPopup = function (_React$Component) {
                 _react2.default.createElement(
                   'td',
                   null,
-                  _react2.default.createElement('input', { placeholder: 'Enter product\'s name' })
+                  _react2.default.createElement('input', { placeholder: 'Enter product\'s name', ref: 'name' })
                 )
               ),
               _react2.default.createElement(
@@ -40736,7 +40762,7 @@ var PostPopup = function (_React$Component) {
                 _react2.default.createElement(
                   'td',
                   null,
-                  _react2.default.createElement('input', { placeholder: 'Enter product\'s description' })
+                  _react2.default.createElement('input', { placeholder: 'Enter product\'s description', ref: 'description' })
                 )
               ),
               _react2.default.createElement(
@@ -40750,7 +40776,7 @@ var PostPopup = function (_React$Component) {
                 _react2.default.createElement(
                   'td',
                   null,
-                  _react2.default.createElement('input', { placeholder: 'http://www...' })
+                  _react2.default.createElement('input', { placeholder: 'http://www...', ref: 'link' })
                 )
               ),
               _react2.default.createElement(
@@ -40764,7 +40790,7 @@ var PostPopup = function (_React$Component) {
                 _react2.default.createElement(
                   'td',
                   null,
-                  _react2.default.createElement('input', { placeholder: 'Put a direct link to an image' })
+                  _react2.default.createElement('input', { placeholder: 'Put a direct link to an image', ref: 'media' })
                 )
               )
             )
@@ -40788,7 +40814,7 @@ var PostPopup = function (_React$Component) {
 
 exports.default = PostPopup;
 
-},{"./Popup":198,"react":192}],200:[function(require,module,exports){
+},{"../../actions":194,"./Popup":198,"react":192}],200:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -40983,7 +41009,7 @@ var Navbar = function (_React$Component) {
             ),
             _react2.default.createElement(_ProfileMenu2.default, { user: this.props.user })
           ),
-          _react2.default.createElement(_PostPopup2.default, { status: this.state.popupStatus, hidePopup: this.hidePopup })
+          _react2.default.createElement(_PostPopup2.default, { status: this.state.popupStatus, hidePopup: this.hidePopup, user: this.props.user })
         ) : _react2.default.createElement(
           'section',
           null,
