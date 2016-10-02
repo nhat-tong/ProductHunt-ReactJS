@@ -40408,6 +40408,31 @@ var Actions = function () {
         });
       };
     }
+  }, {
+    key: 'addComment',
+    value: function addComment(productId, comment) {
+      return function (dispatch) {
+        _firebase2.default.database().ref('/comments').child(productId).push(comment);
+      };
+    }
+  }, {
+    key: 'getComments',
+    value: function getComments(productId) {
+      return function (dispatch) {
+        var commentRef = _firebase2.default.database().ref('/comments').child(productId);
+        commentRef.on('value', function (snapshot) {
+          var commentsValue = snapshot.val();
+          // Lodash _.values convert object to array without the key
+          var comments = (0, _lodash2.default)(commentsValue).keys().map(function (commentKey) {
+            var item = _lodash2.default.clone(commentsValue[commentKey]);
+            item.key = commentKey;
+            return item;
+          }).value();
+
+          dispatch(comments);
+        });
+      };
+    }
   }]);
 
   return Actions;
@@ -41255,6 +41280,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _class;
+
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
@@ -41267,6 +41294,18 @@ var _Upvote = require('./Upvote');
 
 var _Upvote2 = _interopRequireDefault(_Upvote);
 
+var _connectToStores = require('alt-utils/lib/connectToStores');
+
+var _connectToStores2 = _interopRequireDefault(_connectToStores);
+
+var _ProductStore = require('../../stores/ProductStore');
+
+var _ProductStore2 = _interopRequireDefault(_ProductStore);
+
+var _actions = require('../../actions');
+
+var _actions2 = _interopRequireDefault(_actions);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -41275,7 +41314,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var ProductPopup = function (_React$Component) {
+var ProductPopup = (0, _connectToStores2.default)(_class = function (_React$Component) {
   _inherits(ProductPopup, _React$Component);
 
   function ProductPopup() {
@@ -41283,21 +41322,31 @@ var ProductPopup = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (ProductPopup.__proto__ || Object.getPrototypeOf(ProductPopup)).call(this));
 
-    _this.state = {
-      comments: [{
-        name: "Leo",
-        avatar: "/img/leo.jpeg",
-        content: "I love this product"
-      }, {
-        name: "Jonny",
-        avatar: "/img/hieu.jpeg",
-        content: "I love this product"
-      }]
+    _this.handleComment = function (e) {
+      if (e.keyCode === 13 && e.target.value.length > 0) {
+        var comment = {
+          content: e.target.value,
+          name: _this.props.user.name,
+          avatar: _this.props.user.avatar
+        };
+
+        _actions2.default.addComment(_this.props.pId, comment);
+        e.target.value = null;
+      }
     };
+
     return _this;
   }
 
   _createClass(ProductPopup, [{
+    key: 'shouldComponentUpdate',
+    value: function shouldComponentUpdate(nextProps, nextState) {
+      if (nextProps.status && this.props.status != nextProps.status) {
+        _actions2.default.getComments(this.props.pId);
+      }
+      return true;
+    }
+  }, {
     key: 'renderHeader',
     value: function renderHeader() {
       return _react2.default.createElement(
@@ -41340,12 +41389,12 @@ var ProductPopup = function (_React$Component) {
           null,
           'Discussion'
         ),
-        _react2.default.createElement(
+        this.props.user ? _react2.default.createElement(
           'section',
           { className: 'post-comment' },
-          _react2.default.createElement('img', { className: 'medium-avatar', src: '/img/leo.jpeg' }),
-          _react2.default.createElement('input', { placeholder: 'What do you think of this product?' })
-        ),
+          _react2.default.createElement('img', { className: 'medium-avatar', src: this.props.user.avatar }),
+          _react2.default.createElement('input', { placeholder: 'What do you think of this product?', onKeyUp: this.handleComment })
+        ) : null,
         this.renderComments()
       );
     }
@@ -41368,7 +41417,7 @@ var ProductPopup = function (_React$Component) {
       return _react2.default.createElement(
         'ul',
         { className: 'comment-list' },
-        this.state.comments.map(function (comment, idx) {
+        this.props.comments.map(function (comment, idx) {
           return _react2.default.createElement(
             'li',
             { key: idx },
@@ -41401,14 +41450,24 @@ var ProductPopup = function (_React$Component) {
         this.renderBody()
       );
     }
+  }], [{
+    key: 'getStores',
+    value: function getStores() {
+      return [_ProductStore2.default];
+    }
+  }, {
+    key: 'getPropsFromStores',
+    value: function getPropsFromStores() {
+      return _ProductStore2.default.getState();
+    }
   }]);
 
   return ProductPopup;
-}(_react2.default.Component);
+}(_react2.default.Component)) || _class;
 
 exports.default = ProductPopup;
 
-},{"../Navbar/Popup":198,"./Upvote":205,"react":192}],205:[function(require,module,exports){
+},{"../../actions":194,"../../stores/ProductStore":207,"../Navbar/Popup":198,"./Upvote":205,"alt-utils/lib/connectToStores":2,"react":192}],205:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -41580,7 +41639,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _dec, _dec2, _dec3, _class, _desc, _value, _class2;
+var _dec, _dec2, _dec3, _dec4, _class, _desc, _value, _class2;
 
 var _alt = require('../alt');
 
@@ -41625,11 +41684,11 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
   return desc;
 }
 
-var ProductStore = (_dec = (0, _decorators.decorate)(_alt2.default), _dec2 = (0, _decorators.bind)(_actions2.default.login, _actions2.default.initSession, _actions2.default.logout), _dec3 = (0, _decorators.bind)(_actions2.default.getProducts), _dec(_class = (_class2 = function () {
+var ProductStore = (_dec = (0, _decorators.decorate)(_alt2.default), _dec2 = (0, _decorators.bind)(_actions2.default.login, _actions2.default.initSession, _actions2.default.logout), _dec3 = (0, _decorators.bind)(_actions2.default.getProducts), _dec4 = (0, _decorators.bind)(_actions2.default.getComments), _dec(_class = (_class2 = function () {
   function ProductStore() {
     _classCallCheck(this, ProductStore);
 
-    this.state = { user: null, products: [] };
+    this.state = { user: null, products: [], comments: [] };
   }
 
   _createClass(ProductStore, [{
@@ -41642,10 +41701,15 @@ var ProductStore = (_dec = (0, _decorators.decorate)(_alt2.default), _dec2 = (0,
     value: function getProducts(products) {
       this.setState({ products: products });
     }
+  }, {
+    key: 'getComments',
+    value: function getComments(comments) {
+      this.setState({ comments: comments });
+    }
   }]);
 
   return ProductStore;
-}(), (_applyDecoratedDescriptor(_class2.prototype, 'login', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'login'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'getProducts', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'getProducts'), _class2.prototype)), _class2)) || _class);
+}(), (_applyDecoratedDescriptor(_class2.prototype, 'login', [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, 'login'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'getProducts', [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, 'getProducts'), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, 'getComments', [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, 'getComments'), _class2.prototype)), _class2)) || _class);
 exports.default = _alt2.default.createStore(ProductStore);
 
 },{"../actions":194,"../alt":195,"alt-utils/lib/decorators":3}]},{},[206]);

@@ -115,6 +115,29 @@ class Actions {
       });
     }
   }
+
+  addComment(productId, comment) {
+    return (dispatch) => {
+      Firebase.database().ref('/comments').child(productId).push(comment);
+    };
+  }
+
+  getComments(productId) {
+    return (dispatch) => {
+      var commentRef = Firebase.database().ref('/comments').child(productId);
+      commentRef.on('value', (snapshot) => {
+        var commentsValue = snapshot.val();
+        // Lodash _.values convert object to array without the key
+        var comments = _(commentsValue).keys().map((commentKey) => {
+          var item = _.clone(commentsValue[commentKey]);
+          item.key = commentKey;
+          return item;
+        }).value();
+
+        dispatch(comments);
+      });
+    };
+  }
 }
 
 export default alt.createActions(Actions);
