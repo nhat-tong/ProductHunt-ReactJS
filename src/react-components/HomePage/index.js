@@ -2,32 +2,23 @@ import React from 'react';
 import ProductList from '../Product/ProductList';
 import Firebase from 'firebase';
 import _ from 'lodash';
+import connectToStores from 'alt-utils/lib/connectToStores';
+import ProductStore from '../../stores/ProductStore';
+import Actions from '../../actions';
 
+@connectToStores
 class HomePage extends React.Component {
   constructor() {
     super();
-    this.state = {
-      ProductList: []
-    };
+    Actions.getProducts();
+  }
 
-    // Initialize Firebase
-    // https://firebase.google.com/support/guides/firebase-web
-    var config = {
-      apiKey: "AIzaSyD7YCO27zGw16GiLjPKK31M0siaEz0OEj4",
-      authDomain: "codehunt-e35f2.firebaseapp.com",
-      databaseURL: "https://codehunt-e35f2.firebaseio.com",
-      storageBucket: "",
-      messagingSenderId: "28704545983"
-    };
-    Firebase.initializeApp(config);
-    var firebaseRef = Firebase.database().ref('/products');
-    // DataSnapshot
-    firebaseRef.on('value', (snapshot) => {
-      var products = _.values(snapshot.val());
-      this.setState({
-        ProductList: products
-      });
-    });
+  static getStores() {
+    return [ProductStore];
+  }
+
+  static getPropsFromStores() {
+    return ProductStore.getState();
   }
 
   render() {
@@ -40,9 +31,9 @@ class HomePage extends React.Component {
         <section>
           <section className="container">
             {
-              this.state.ProductList
+              this.props.products
               ?
-              <ProductList productList={this.state.ProductList} />
+              <ProductList productList={this.props.products} />
               :
               null
             }

@@ -5,12 +5,15 @@
   "main": "index.js",
   "scripts": {
     "start": "node server/express-server.js",
-    "build": "browserify -t [ babelify --presets [ es2015 stage-0 react ] ] ./src/react-components/app.js -o ./public/js/app.js",
+    "build": "browserify -t [ babelify --presets [ es2015 stage-0 react ] --plugins [transform-decorators-legacy] ] ./src/react-components/app.js -o ./public/js/app.js",
     "build:watch": "watch \"npm run build\" src"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "alt": "^0.18.6",
+    "alt-utils": "^1.0.0",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "babel-preset-es2015": "^6.14.0",
     "babel-preset-react": "^6.11.1",
     "babel-preset-stage-0": "^6.5.0",
