@@ -76,7 +76,14 @@ class Actions {
       var firebaseRef = Firebase.database().ref('/products');
       // DataSnapshot
       firebaseRef.on('value', (snapshot) => {
-        var products = _.values(snapshot.val());
+        var productsValue = snapshot.val();
+        // Lodash _.values convert object to array without the key
+        var products = _(productsValue).keys().map((productKey) => {
+          var item = _.clone(productsValue[productKey]);
+          item.key = productKey;
+          return item;
+        }).value();
+
         dispatch(products);
       });
     }
@@ -85,6 +92,27 @@ class Actions {
   addProduct(product) {
     return (dispatch) => {
       Firebase.database().ref('/products').push(product);
+    }
+  }
+
+  addVote(productId, userId) {
+    return (dispatch) => {
+      var firebaseRef = Firebase.database().ref('/products').child(productId).child('upvote');
+      // Check if user didn't yet vote for this product
+      var voteRef = Firebase.database().ref('/votes').child(productId).child(userId);
+      voteRef.on('value', (snapshot) => {
+        if(snapshot.val() == null) {
+          voteRef.set(true);
+
+          var vote = 0;
+          // Get current vote from db
+          firebaseRef.on('value', (snapshot) => {
+            vote = snapshot.val();
+          });
+          // Increase vote
+          firebaseRef.set(vote+1);
+        }
+      });
     }
   }
 }

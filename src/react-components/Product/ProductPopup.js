@@ -1,22 +1,11 @@
 import React from 'react';
 import Popup from '../Navbar/Popup';
+import Upvote from './Upvote';
 
 class ProductPopup extends React.Component {
   constructor() {
     super();
     this.state = {
-      product: {
-        id: 1,
-        name: 'CodeCademy',
-        link: 'https://codecademy.com',
-        media: '/img/codecademy.jpeg',
-        upvote: 169,
-        description: 'Code for anyone',
-        marker: {
-          name: 'hieu',
-          avatar: '/img/hieu.jpeg'
-        }
-      },
       comments: [
         {
           name: "Leo",
@@ -32,26 +21,15 @@ class ProductPopup extends React.Component {
     };
   }
 
-  renderUpvoteButton() {
-  return (
-    <a className="upvote-button" href="#">
-      <span>
-        <i className="fa fa-sort-asc"></i>
-      </span>
-      {this.state.product.upvote}
-    </a>
-  );
-}
-
   renderHeader() {
     return (
-      <header style={{backgroundImage: 'url(' + this.state.product.media + ')'}}>
+      <header style={{backgroundImage: 'url(' + this.props.media + ')'}}>
         <section className="header-shadow">
-          <h1>{this.state.product.name}</h1>
-          <p>{this.state.product.description}</p>
+          <h1>{this.props.name}</h1>
+          <p>{this.props.description}</p>
           <section>
-            {this.renderUpvoteButton()}
-            <a className="getit-btn" href={this.state.product.link} target="_blank">GET IT</a>
+            <Upvote {...this.props}/>
+            <a className="getit-btn" href={this.props.link} target="_blank">GET IT</a>
           </section>
         </section>
       </header>
